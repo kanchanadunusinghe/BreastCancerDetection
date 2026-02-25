@@ -1,0 +1,5 @@
+﻿1. Set BCD.API as Startup project.
+2. Update the ConnectionString in appsettings.json which is in BCD.API according to your MSSQL database server.
+3. Change the default project with BCD.API.
+4. Run Update-Database command using package manager console.
+5. Update-Database -Project BCD.Infrastructure -StartUp BCD.API -Verbose

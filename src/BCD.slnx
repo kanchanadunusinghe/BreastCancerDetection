@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/Core/">
+    <Project Path="Core/BCD.Application/BCD.Application.csproj" Id="10865d5d-f9c5-4bec-9ec0-d6091f15eb1d" />
+    <Project Path="Core/BCD.Domain/BCD.Domain.csproj" Id="27ea0d46-1931-46fb-ae22-bf41c618f27e" />
+  </Folder>
+  <Folder Name="/Infrastructure/">
+    <Project Path="Infrastructure/BCD.Infrastructure/BCD.Infrastructure.csproj" Id="dd0c138d-2cc8-48a1-a5d7-696890a785b7" />
+  </Folder>
+  <Folder Name="/Web/">
+    <Project Path="Web/BCD.Api/BCD.Api.csproj" Id="41c72917-5d9a-4c58-9af3-f2e43e532e58" />
+  </Folder>
+</Solution>

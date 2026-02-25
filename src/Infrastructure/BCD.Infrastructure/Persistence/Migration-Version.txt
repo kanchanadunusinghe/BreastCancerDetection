@@ -1,0 +1,10 @@
+﻿﻿Enable-Migrations -Project BCD.Infrastructure -StartUp BCD.API -Verbose
+
+Add-Migration BCD0001 -Project BCD.Infrastructure -OutputDir Persistence\Migrations -StartUp BCD.API -Verbose
+Add-Migration BCD0002 -Project BCD.Infrastructure -OutputDir Persistence\Migrations -StartUp BCD.API -Verbose
+
+Update-Database -Project BCD.Infrastructure -StartUp BCD.API -Verbose
+
+Remove-Migration -Project BCD.Infrastructure -StartUp BCD.API -Verbose -Force
+
+Script-Migration -From BCD0001 -Project BCD.Infrastructure -StartUp BCD.API -Verbose
