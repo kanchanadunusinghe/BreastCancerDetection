@@ -38,6 +38,11 @@ namespace BCD.Infrastructure.Persistence.Configuration
 
             builder.Property(p => p.CreatedAt)
                 .IsRequired();
+
+
+            builder.Property(p => p.IsActive)
+                .HasDefaultValue(true)
+                .IsRequired();
         }
     }
 }

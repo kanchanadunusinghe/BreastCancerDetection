@@ -11,6 +11,7 @@ public class AuthenticationResponseDto
     public List<string>? Roles { get; private set; }
     public DateTime? ExpiresAt { get; private set; }
     public string? Message { get; private set; }
+    public int? UserId { get; set; }
 
     private AuthenticationResponseDto() { }
 
@@ -20,7 +21,8 @@ public class AuthenticationResponseDto
         string token,
         List<string> roles,
         DateTime expiresAt,
-        string message)
+        string message,
+        int userId)
     {
         return new AuthenticationResponseDto
         {
@@ -30,7 +32,8 @@ public class AuthenticationResponseDto
             Token = token,
             Roles = roles,
             ExpiresAt = expiresAt,
-            Message = message
+            Message = message,
+            UserId = userId
         };
     }
 

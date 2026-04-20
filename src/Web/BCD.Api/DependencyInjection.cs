@@ -7,6 +7,9 @@ namespace BCD.Api
     {
         public static IServiceCollection AddBCDApiServices(this IServiceCollection services, IConfiguration configuration)
         {
+
+            services.AddHttpContextAccessor();
+
             var allowedOrigins = new List<string>();
 
             services.Configure<FormOptions>(o =>

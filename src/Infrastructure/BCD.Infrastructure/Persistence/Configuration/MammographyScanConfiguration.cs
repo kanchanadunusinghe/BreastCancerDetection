@@ -27,10 +27,19 @@ namespace BCD.Infrastructure.Persistence.Configuration
             builder.Property(m => m.CreatedAt)
                 .IsRequired();
 
+            builder.Property(m => m.Comment)
+               .IsRequired(false);
+
             builder.HasOne(m => m.Patient)
-                .WithMany()
+                .WithMany(p => p.MammographyScans)
                 .HasForeignKey(m => m.PatientId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(m => m.CreatedUser)
+                .WithMany(m => m.CreatedMammographyScans)
+                .HasForeignKey(m => m.CreatedUserId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(false);
         }
     }
 }

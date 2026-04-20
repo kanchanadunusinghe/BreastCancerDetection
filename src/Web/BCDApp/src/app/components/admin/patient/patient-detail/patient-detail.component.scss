@@ -1,0 +1,56 @@
+.attachment-dropzone {
+	border: 2px dashed #ced4da;
+	border-radius: 6px;
+	padding: 12px;
+	text-align: center;
+	cursor: pointer;
+	background: #fafafa;
+	transition: all 0.2s ease;
+}
+
+.attachment-dropzone:hover {
+	background: #f1f3f5;
+	border-color: #6366f1;
+}
+
+.attachment-dropzone i {
+	font-size: 1.3rem;
+	margin-right: 6px;
+	color: #6b7280;
+}
+
+.attachment-list {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.attachment-item {
+	display: flex;
+	align-items: center;
+	background: #f8f9fa;
+	padding: 6px 10px;
+	border-radius: 6px;
+}
+
+.attachment-item i {
+	font-size: 1.2rem;
+	margin-right: 8px;
+	color: #4f46e5;
+}
+
+.file-info {
+	flex: 1;
+}
+
+.file-name {
+	font-weight: 500;
+	font-size: 13px;
+}
+
+.btn-remove {
+	background: none;
+	border: none;
+	color: #ef4444;
+	cursor: pointer;
+}

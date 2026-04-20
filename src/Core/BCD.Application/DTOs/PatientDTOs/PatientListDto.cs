@@ -1,4 +1,6 @@
-﻿namespace BCD.Application.DTOs.PatientDTOs;
+﻿using BCD.Domain.Enums;
+
+namespace BCD.Application.DTOs.PatientDTOs;
 
 public class PatientListDto
 {
@@ -23,10 +25,12 @@ public class PatientListDto
         (DateTime.Today.DayOfYear < DateOfBirth.DayOfYear ? 1 : 0);
 
     public string Gender { get; set; } = string.Empty;
+    public Gender Sex { get; set; }
 
     public string PostCode { get; set; } = string.Empty;
 
     public DateTime CreatedAt { get; set; }
 
     public int MammographyScanCount { get; set; }
+    public string Status { get; set; } = string.Empty;
 }

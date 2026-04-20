@@ -1,6 +1,7 @@
 ﻿using BCD.Application.Common.Interfaces;
 using BCD.Application.DTOs.Common;
 using BCD.Application.DTOs.PatientDTOs;
+using BCD.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,15 +33,31 @@ public class GetPatientByFilterQueryHandler
 
         if (filter.Gender != 0)
         {
-            query = query.Where(x => x.Gender == filter.Gender);
+            query = query.Where(x => x.Gender == (Gender)filter.Gender);
         }
 
+        if (filter.ActiveStatus != 0)
+        {
+            switch (filter.ActiveStatus)
+            {
+                case 1:
+                    {
+                        query = query.Where(x => x.IsActive);
+                    }
+                    break;
+                case 2:
+                    {
+                        query = query.Where(x => !x.IsActive);
+                    }
+                    break;
+            }
+        }
 
         var totalCount = await query.CountAsync(cancellationToken);
 
         var patients = await query
                   .OrderByDescending(x => x.CreatedAt)
-                  .Skip((filter.PageNumber - 1) * filter.PageSize)
+                  .Skip(filter.PageNumber * filter.PageSize)
                   .Take(filter.PageSize)
                   .Select(x => new PatientListDto
                   {
@@ -54,17 +71,20 @@ public class GetPatientByFilterQueryHandler
                       Gender = x.Gender.ToString(),
                       PostCode = x.PostCode,
                       CreatedAt = x.CreatedAt,
-                      MammographyScanCount = x.MammographyScans.Count()
+                      MammographyScanCount = x.MammographyScans.Count(),
+                      Sex = x.Gender,
+                      Status = x.IsActive == true ? "Active" : "InActive"
                   })
                   .ToListAsync(cancellationToken);
 
 
         return new PagedResultDto<PatientListDto>
         {
-            PageNumber = filter.PageNumber,
+            PageNumber = filter.PageNumber + 1,
             PageSize = filter.PageSize,
             TotalCount = totalCount,
             Data = patients
         };
     }
 }
+

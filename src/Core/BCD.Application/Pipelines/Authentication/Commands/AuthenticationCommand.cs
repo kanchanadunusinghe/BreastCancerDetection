@@ -112,7 +112,8 @@ public class AuthenticationCommandHandler(
                 tokenString,
                 roles,
                 expires,
-                "Login Success"
+                "Login Success",
+                user.Id
             );
 
             return response;

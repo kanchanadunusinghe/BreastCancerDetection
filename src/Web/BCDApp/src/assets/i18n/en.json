@@ -1,0 +1,15 @@
+{
+	"HEADER": {
+		"SEARCH": {
+			"TEXT": "Search.."
+		}
+	},
+	"MENUITEMS": {
+		"PATIENTS": {
+			"TEXT": "Patients"
+		},
+		"MAIN": {
+			"TEXT": "-- Main"
+		}
+	}
+}

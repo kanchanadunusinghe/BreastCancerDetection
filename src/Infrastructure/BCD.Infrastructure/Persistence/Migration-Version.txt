@@ -2,6 +2,9 @@
 
 Add-Migration BCD0001 -Project BCD.Infrastructure -OutputDir Persistence\Migrations -StartUp BCD.API -Verbose
 Add-Migration BCD0002 -Project BCD.Infrastructure -OutputDir Persistence\Migrations -StartUp BCD.API -Verbose
+Add-Migration BCD0003 -Project BCD.Infrastructure -OutputDir Persistence\Migrations -StartUp BCD.API -Verbose
+Add-Migration BCD0004 -Project BCD.Infrastructure -OutputDir Persistence\Migrations -StartUp BCD.API -Verbose
+Add-Migration BCD0005 -Project BCD.Infrastructure -OutputDir Persistence\Migrations -StartUp BCD.API -Verbose
 
 Update-Database -Project BCD.Infrastructure -StartUp BCD.API -Verbose
 

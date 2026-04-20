@@ -1,5 +1,6 @@
 ﻿using BCD.Application.Common.Interfaces;
 using BCD.Infrastructure.Persistence;
+using BCD.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -18,6 +19,9 @@ public static class DependencyInjection
         services.AddTransient<IBCDContext>(provider => provider.GetRequiredService<BCDContext>());
 
         services.AddTransient<BCDContextSeeder>();
+
+        services.AddTransient<IBCDMachineLearningService, BCDMachineLearningService>();
+
         return services;
     }
 }

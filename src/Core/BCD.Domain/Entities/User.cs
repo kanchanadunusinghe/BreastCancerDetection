@@ -16,6 +16,7 @@
         public bool IsActive { get; set; }
 
         public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+        public virtual ICollection<MammographyScan> CreatedMammographyScans { get; set; } = new List<MammographyScan>();
 
 
     }

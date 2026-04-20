@@ -1,0 +1,304 @@
+<div class="module-header mb-3">
+	<div>
+		<h5 class="mb-1">AI Breast Cancer Detection</h5>
+		<small class="text-muted"> Upload a diagnostic scan and run AI-based malignancy prediction. </small>
+	</div>
+
+	<span class="module-status" *ngIf="selectedImage"> Image Selected </span>
+</div>
+
+<div class="step-card">
+	<div class="step-title">
+		<span class="step-number">1</span>
+		Upload Diagnostic Image
+	</div>
+
+	<div
+		class="attachment-dropzone"
+		(click)="fileInput.click()"
+		(dragover)="onDragOver($event)"
+		(drop)="onFileDrop($event)"
+	>
+		<i class="pi pi-image"></i>
+		<div>
+			<strong>Drag & drop</strong> scan image here or <u>browse</u>
+			<div class="text-muted small">Supported: JPG, PNG, WEBP (Max 10MB)</div>
+		</div>
+
+		<input #fileInput type="file" accept="image/*" hidden (change)="onFileSelected($event)" />
+	</div>
+</div>
+
+<div class="step-card mt-3" *ngIf="selectedImage">
+	<div class="step-title">
+		<span class="step-number">2</span>
+		Review Uploaded Image
+	</div>
+
+	<div class="attachment-card">
+		<div class="left-section">
+			<img [src]="selectedImage.preview" alt="preview" class="image-preview" />
+
+			<div class="file-info">
+				<div class="file-name">
+					{{ selectedImage.file.name }}
+				</div>
+				<div class="file-meta">{{ selectedImage.file.size / 1024 | number: '1.0-0' }} KB</div>
+				<div class="file-type text-muted small">
+					{{ selectedImage.file.type }}
+				</div>
+			</div>
+		</div>
+
+		<div class="right-section">
+			<span class="status-badge ready"> Ready </span>
+
+			<button class="btn-replace" (click)="fileInput.click()" type="button">Replace</button>
+
+			<button class="btn-remove" type="button" (click)="removeImage()">
+				<i class="far fa-trash-alt"></i>
+			</button>
+		</div>
+	</div>
+</div>
+
+<div class="step-card mt-3" *ngIf="selectedImage">
+	<div class="step-title">
+		<span class="step-number">3</span>
+		Run AI Analysis
+	</div>
+
+	<div class="analysis-section">
+		<div class="analysis-info">AI will evaluate the scan and predict malignancy probability.</div>
+
+		<button class="btn btn-primary px-4" [disabled]="!selectedImage || isProcessing" (click)="breastCancerPredict()">
+			<i class="pi pi-cog mr-2" *ngIf="!isProcessing"></i>
+			<i class="pi pi-spin pi-spinner mr-2" *ngIf="isProcessing"></i>
+
+			{{ isProcessing ? 'Processing...' : 'Process AI Detection' }}
+		</button>
+	</div>
+</div>
+
+<div class="disclaimer mt-4">
+	⚠ This AI prediction is for clinical assistance only. Final diagnosis must be confirmed by a certified medical
+	professional.
+</div>
+
+<div class="result-overlay" *ngIf="showResultModal">
+	<div class="result-modal">
+		<div class="result-header">
+			<div>
+				<h5 class="mb-0">AI Mammography Diagnostic Report</h5>
+				<small class="text-muted"> Record ID: ### {{ predictionResult?.recordId }} </small>
+			</div>
+
+			<button class="close-btn" (click)="closeResult()">✕</button>
+		</div>
+
+		<div class="result-body">
+			<div class="result-image">
+				<img [src]="predictionResult?.exrayImageUrl" />
+			</div>
+
+			<div class="result-info">
+				<div class="patient-card">
+					<h6>Patient Information</h6>
+					<div class="patient-grid">
+						<div>
+							<strong>Name:</strong> {{ predictionResult?.patient?.firstName }}
+							{{ predictionResult?.patient?.lastName }}
+						</div>
+						<div><strong>NHS No:</strong> {{ predictionResult?.patient?.nhsNumber }}</div>
+						<div><strong>DOB:</strong> {{ predictionResult?.patient?.dateOfBirth | date }}</div>
+						<div><strong>Email:</strong> {{ predictionResult?.patient?.email }}</div>
+						<div><strong>Mobile:</strong> {{ predictionResult?.patient?.mobileNumber }}</div>
+						<div><strong>Post Code:</strong> {{ predictionResult?.patient?.postCode }}</div>
+					</div>
+				</div>
+
+				<div class="ai-result mt-3">
+					<div
+						class="result-badge"
+						[ngClass]="{
+							benign: predictionResult?.cancerType === 'benign',
+							malignant: predictionResult?.cancerType === 'malignant',
+						}"
+					>
+						{{ predictionResult?.cancerType | titlecase }}
+					</div>
+
+					<div class="probability">
+						Confidence:
+						<strong> {{ predictionResult?.probability * 100 | number: '1.0-2' }}% </strong>
+					</div>
+
+					<div class="meta mt-2">
+						<div><strong>Created At:</strong> {{ predictionResult?.createdAt }}</div>
+						<div><strong>Processed By:</strong> {{ predictionResult?.createdUserName }}</div>
+					</div>
+				</div>
+
+				<div class="comment-section mt-3">
+					<label>Clinical Notes / Comments</label>
+					<textarea
+						class="form-control"
+						rows="4"
+						[(ngModel)]="doctorComment"
+						[placeholder]="predictionResult?.comment || 'Add additional medical observations...'"
+					></textarea>
+				</div>
+
+				<div class="clinical-note mt-3">
+					⚠ AI-assisted result. Final diagnosis must be confirmed by a certified medical professional.
+				</div>
+			</div>
+		</div>
+
+		<div class="result-footer">
+			<div class="left-actions">
+				<button class="btn btn-outline-secondary" (click)="printReport()">Print Report</button>
+
+				<button class="btn btn-outline-primary" (click)="sendEmail()">Send Email</button>
+			</div>
+
+			<div class="right-actions">
+				<button class="btn btn-success" (click)="mammographyScanCommentUpdate()">Save</button>
+
+				<button class="btn btn-danger" (click)="closeResult()">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="history-section mt-4">
+	<div class="history-header">
+		<h5>Scan History</h5>
+		<span class="history-count"> {{ scanList?.length }} Records </span>
+	</div>
+
+	<div class="scan-grid">
+		<div class="scan-card" *ngFor="let scan of scanList" (click)="openScanDetail(scan)">
+			<div class="scan-image">
+				<img [src]="scan.exrayImageUrl" />
+			</div>
+
+			<div class="scan-info">
+				<div class="scan-top">
+					<span class="record-id">
+						{{ scan.recordId }}
+					</span>
+
+					<span
+						class="result-badge"
+						[ngClass]="{
+							benign: scan.cancerType === 'benign',
+							malignant: scan.cancerType === 'malignant',
+						}"
+					>
+						{{ scan.cancerType | titlecase }}
+					</span>
+				</div>
+
+				<div class="confidence">
+					<div class="confidence-bar">
+						<div class="confidence-fill" [style.width.%]="scan.probability * 100"></div>
+					</div>
+					<small> {{ scan.probability * 100 | number: '1.0-2' }}% </small>
+				</div>
+
+				<div class="meta">
+					<div>{{ scan.createdAt }}</div>
+					<div>{{ scan.createdUserName || 'System' }}</div>
+				</div>
+
+				<div class="comment-indicator" *ngIf="scan.comment">📝 Comment Added</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="result-overlay" *ngIf="showResultViewModal">
+	<div class="result-modal">
+		<div class="result-header">
+			<div>
+				<h5 class="mb-0">AI Mammography Diagnostic Report</h5>
+				<small class="text-muted"> Record ID: ### {{ predictionResult?.recordId }} </small>
+			</div>
+
+			<button class="close-btn" (click)="closeViewModal()">✕</button>
+		</div>
+
+		<div class="result-body">
+			<div class="result-image">
+				<img [src]="predictionResult?.exrayImageUrl" />
+			</div>
+
+			<div class="result-info">
+				<div class="patient-card">
+					<h6>Patient Information</h6>
+					<div class="patient-grid">
+						<div>
+							<strong>Name:</strong> {{ predictionResult?.patient?.firstName }}
+							{{ predictionResult?.patient?.lastName }}
+						</div>
+						<div><strong>NHS No:</strong> {{ predictionResult?.patient?.nhsNumber }}</div>
+						<div><strong>DOB:</strong> {{ predictionResult?.patient?.dateOfBirth | date }}</div>
+						<div><strong>Email:</strong> {{ predictionResult?.patient?.email }}</div>
+						<div><strong>Mobile:</strong> {{ predictionResult?.patient?.mobileNumber }}</div>
+						<div><strong>Post Code:</strong> {{ predictionResult?.patient?.postCode }}</div>
+					</div>
+				</div>
+
+				<div class="ai-result mt-3">
+					<div
+						class="result-badge"
+						[ngClass]="{
+							benign: predictionResult?.cancerType === 'benign',
+							malignant: predictionResult?.cancerType === 'malignant',
+						}"
+					>
+						{{ predictionResult?.cancerType | titlecase }}
+					</div>
+
+					<div class="probability">
+						Confidence:
+						<strong> {{ predictionResult?.probability * 100 | number: '1.0-2' }}% </strong>
+					</div>
+
+					<div class="meta mt-2">
+						<div><strong>Created At:</strong> {{ predictionResult?.createdAt }}</div>
+						<div><strong>Processed By:</strong> {{ predictionResult?.createdUserName }}</div>
+					</div>
+				</div>
+
+				<div class="comment-section mt-3">
+					<label>Clinical Notes / Comments</label>
+					<textarea
+						class="form-control"
+						rows="4"
+						[(ngModel)]="doctorComment"
+						[disabled]="true"
+						[placeholder]="predictionResult?.comment || 'Add additional medical observations...'"
+					></textarea>
+				</div>
+
+				<div class="clinical-note mt-3">
+					⚠ AI-assisted result. Final diagnosis must be confirmed by a certified medical professional.
+				</div>
+			</div>
+		</div>
+
+		<div class="result-footer">
+			<div class="left-actions">
+				<button class="btn btn-outline-secondary" (click)="printReport()">Print Report</button>
+
+				<button class="btn btn-outline-primary" (click)="sendEmail()">Send Email</button>
+			</div>
+
+			<div class="right-actions">
+				<button class="btn btn-danger" (click)="closeViewModal()">Close</button>
+			</div>
+		</div>
+	</div>
+</div>

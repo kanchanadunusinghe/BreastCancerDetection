@@ -14,5 +14,11 @@
         public decimal ConfidenceScore { get; set; }
 
         public DateTime CreatedAt { get; set; }
+
+        public string? Comment { get; set; } = string.Empty;
+
+        public int? CreatedUserId { get; set; }
+        public virtual User? CreatedUser { get; set; }
+
     }
 }

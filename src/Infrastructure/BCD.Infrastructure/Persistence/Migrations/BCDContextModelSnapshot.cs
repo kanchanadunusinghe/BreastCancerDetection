@@ -47,12 +47,18 @@ namespace BCD.Infrastructure.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("ConfidenceScore")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("CreatedUserId")
+                        .HasColumnType("int");
 
                     b.Property<string>("ImageUrl")
                         .IsRequired()
@@ -62,9 +68,6 @@ namespace BCD.Infrastructure.Persistence.Migrations
                     b.Property<int>("PatientId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("PatientId1")
-                        .HasColumnType("int");
-
                     b.Property<string>("PredictionResult")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -72,9 +75,9 @@ namespace BCD.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PatientId");
+                    b.HasIndex("CreatedUserId");
 
-                    b.HasIndex("PatientId1");
+                    b.HasIndex("PatientId");
 
                     b.ToTable("MammographyScans", (string)null);
                 });
@@ -105,6 +108,11 @@ namespace BCD.Infrastructure.Persistence.Migrations
                     b.Property<int>("Gender")
                         .HasMaxLength(20)
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -219,15 +227,18 @@ namespace BCD.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BCD.Domain.Entities.MammographyScan", b =>
                 {
+                    b.HasOne("BCD.Domain.Entities.User", "CreatedUser")
+                        .WithMany("CreatedMammographyScans")
+                        .HasForeignKey("CreatedUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("BCD.Domain.Entities.Patient", "Patient")
-                        .WithMany()
+                        .WithMany("MammographyScans")
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("BCD.Domain.Entities.Patient", null)
-                        .WithMany("MammographyScans")
-                        .HasForeignKey("PatientId1");
+                    b.Navigation("CreatedUser");
 
                     b.Navigation("Patient");
                 });
@@ -263,6 +274,8 @@ namespace BCD.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("BCD.Domain.Entities.User", b =>
                 {
+                    b.Navigation("CreatedMammographyScans");
+
                     b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618

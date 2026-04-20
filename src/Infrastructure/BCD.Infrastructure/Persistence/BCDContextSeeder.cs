@@ -1,4 +1,6 @@
-﻿using BCD.Domain.Enums;
+﻿using BCD.Application.Common.Constants;
+using BCD.Domain.Entities;
+using BCD.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -27,6 +29,7 @@ namespace BCD.Infrastructure.Persistence
             await SeedRoleAsync();
             await SeedUsersAsync();
             await SeedPatientsAsync();
+            await SeedAppSettingAsync();
         }
 
         public async Task SeedRoleAsync()
@@ -235,6 +238,30 @@ namespace BCD.Infrastructure.Persistence
             {
                 logger.LogError(ex, "An error occurred while seeding patients.");
                 throw;
+            }
+        }
+
+        public async Task SeedAppSettingAsync()
+        {
+            try
+            {
+                if (context.AppSettings
+                    .FirstOrDefault((x) => x.Key == AppSettingConstant.BREAST_CANCER_PREDICTION_API_URL) == null)
+                {
+                    context.Add(new AppSetting
+                    {
+                        Key = AppSettingConstant.BREAST_CANCER_PREDICTION_API_URL,
+                        Value = AppSettingConstant.BREAST_CANCER_PREDICTION_API_URL_VALUE
+                    });
+                }
+
+                await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "An error occurred while seeding AppSettings.");
+                throw;
+
             }
         }
     }

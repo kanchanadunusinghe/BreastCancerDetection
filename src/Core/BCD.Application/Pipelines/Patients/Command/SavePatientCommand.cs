@@ -44,7 +44,8 @@ public class SavePatientCommandHandler(
                     DateOfBirth = dto.DateOfBirth,
                     Gender = dto.Gender,
                     PostCode = dto.PostCode,
-                    CreatedAt = DateTime.Now
+                    CreatedAt = DateTime.Now,
+                    IsActive = true
                 };
 
                 await bCDContext.Patients.AddAsync(patient, cancellationToken);

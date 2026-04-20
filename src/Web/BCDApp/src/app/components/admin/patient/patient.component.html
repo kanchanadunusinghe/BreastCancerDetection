@@ -1,0 +1,196 @@
+<section class="main-content">
+	<p-confirmDialog
+		[style]="{ width: '25vw' }"
+		acceptButtonStyleClass="p-button-raised p-button-danger"
+		rejectButtonStyleClass="p-button-raised p-button-success"
+	></p-confirmDialog>
+
+	<ul class="breadcrumb breadcrumb-style">
+		<li class="breadcrumb-item">
+			<h5 class="page-title m-b-0">Doctor</h5>
+		</li>
+		<li class="breadcrumb-item bcrumb-1">
+			<a routerLink="/dashboard/main"> <i class="fas fa-home font-17"></i></a>
+		</li>
+		<li class="breadcrumb-item">Patients</li>
+	</ul>
+	<div class="section-body">
+		<div class="row clearfix">
+			<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+				<div class="card">
+					<div class="p-10">
+						<div class="row">
+							<div class="col-12">
+								<div class="row m-0">
+									<div class="col-12 p-0">
+										<div class="ngxTableHeader">
+											<div class="table-title">
+												<h2><strong>Patients</strong></h2>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-12 p-0">
+									<div class="row">
+										<div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 ps-3 pe-3 pt-1">
+											<div class="form-group">
+												<label>Search</label>
+												<input
+													type="text"
+													[(ngModel)]="patientFilterModel.search"
+													[ngModelOptions]="{ standalone: true }"
+													class="p-inputtext-sm"
+													[style]="{ width: '100%' }"
+													placeholder="Search by name"
+													name="searchText"
+													pInputText
+												/>
+											</div>
+										</div>
+										<div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 ps-3 pe-3 pt-3">
+											<div class="form-group">
+												<label>Patient Gender</label>
+												<p-dropdown
+													[options]="patinetMasterDataModel.listOfGenders"
+													class="p-inputtext-sm"
+													optionLabel="name"
+													optionValue="id"
+													[(ngModel)]="patientFilterModel.gender"
+													[ngModelOptions]="{ standalone: true }"
+													[style]="{ width: '100%' }"
+													placeholder="-All-"
+												>
+													<div [style]="{ width: '100%' }">
+														<ng-template let-item pTemplate="item">
+															{{ item.name }}
+														</ng-template>
+													</div>
+												</p-dropdown>
+											</div>
+										</div>
+										<div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 ps-3 pe-3 pt-3">
+											<div class="form-group">
+												<label>Status</label>
+												<p-dropdown
+													[options]="patinetMasterDataModel.listOfActiveStatus"
+													class="p-inputtext-sm"
+													optionLabel="name"
+													optionValue="id"
+													[(ngModel)]="patientFilterModel.activeStatus"
+													[ngModelOptions]="{ standalone: true }"
+													[style]="{ width: '100%' }"
+													placeholder="-All-"
+												>
+													<div [style]="{ width: '100%' }">
+														<ng-template let-item pTemplate="item">
+															{{ item.name }}
+														</ng-template>
+													</div>
+												</p-dropdown>
+											</div>
+										</div>
+
+										<div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 ps-3 pe-3 pt-5">
+											<button class="btn btn-primary me-2" (click)="getPatientsByFilter()">Search</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+								<p-table
+									[value]="listOfPatients"
+									[paginator]="true"
+									[rows]="patientFilterModel.pageSize"
+									[(first)]="patientFilterModel.pageNumber"
+									[lazy]="true"
+									(onLazyLoad)="loadPatients($event)"
+									[responsive]="true"
+									currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+									[rowsPerPageOptions]="[5, 10, 50]"
+									[totalRecords]="totalRecordCount"
+									styleClass="p-datatable-gridlines p-datatable-sm"
+								>
+									<ng-template pTemplate="header">
+										<tr>
+											<th style="width: 180px">
+												<button
+													pButton
+													icon="pi pi-plus"
+													label="Add Patient"
+													class="p-button-success p-button-sm"
+													(click)="routePatientDetailsModule(0)"
+												></button>
+											</th>
+											<th>NHS Number</th>
+											<th>Full Name</th>
+											<th>Email</th>
+											<th>Mobile Number</th>
+											<th>Date Of Birth</th>
+											<th>Age</th>
+											<th>Gender</th>
+											<th>Status</th>
+										</tr>
+									</ng-template>
+									<ng-template pTemplate="body" let-patient>
+										<tr>
+											<td>
+												<div class="d-flex gap-2 flex-wrap">
+													<button
+														pButton
+														icon="pi pi-pencil"
+														class="p-button-sm p-button-info"
+														(click)="routePatientDetailsModule(patient.id)"
+													></button>
+
+													<button pButton icon="pi pi-trash" class="p-button-sm p-button-danger"></button>
+
+													<button
+														pButton
+														icon="pi pi-heart"
+														class="p-button-sm p-button-success"
+														[disabled]="patient.sex === Gender.Male || patient.sex === Gender.Other"
+														(click)="routeBreastCancerDetectorModule(patient.id)"
+													></button>
+												</div>
+											</td>
+											<td>{{ patient.nhsNumber }}</td>
+											<td>{{ patient.fullName }}</td>
+											<td>{{ patient.email }}</td>
+											<td>{{ patient.mobileNumber }}</td>
+											<td>{{ patient.dateOfBirth | date }}</td>
+											<td>{{ patient.age }}</td>
+											<td>
+												<span
+													class="badge"
+													[ngClass]="{
+														'badge-male': patient.gender === 'Male',
+														'badge-female': patient.gender === 'Female',
+													}"
+												>
+													{{ patient.gender }}
+												</span>
+											</td>
+											<td>
+												<span
+													class="badge"
+													[ngClass]="{
+														'badge-active': patient.status === 'Active',
+														'badge-inactive': patient.status !== 'Active',
+													}"
+												>
+													{{ patient.status }}
+												</span>
+											</td>
+										</tr>
+									</ng-template>
+								</p-table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>

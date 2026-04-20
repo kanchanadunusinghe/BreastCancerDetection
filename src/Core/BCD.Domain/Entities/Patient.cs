@@ -16,6 +16,7 @@ namespace BCD.Domain.Entities
         public Gender Gender { get; set; }
         public string PostCode { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
+        public bool IsActive { get; set; }
 
         public virtual ICollection<MammographyScan> MammographyScans { get; set; } = new List<MammographyScan>();
     }
